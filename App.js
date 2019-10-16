@@ -1,7 +1,9 @@
 import React from 'react';
-import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator,
+FlatList, Dimensions, Image } from 'react-native';
 import axios from 'axios';
 
+const {height, width} = Dimensions.get('window');
 export default class App extends React.Component {
 
   constructor(){
@@ -11,6 +13,7 @@ export default class App extends React.Component {
       images: []
     }
     this.loadWallpapers = this.loadWallpapers.bind(this);
+    this.renderItem = this.renderItem.bind(this);
   }
  
   loadWallpapers(){
@@ -23,6 +26,16 @@ export default class App extends React.Component {
   componentDidMount(){
     this.loadWallpapers()
   }
+  renderItem(image){
+    return <View style={{height,width}}>
+      <Image
+      style={{flex:1, height:null, width:null}}
+        source={{uri:image.urls.regular}}
+      />
+
+    </View>
+    
+  }
   render(){
     //verifica el estado del state y renderiza a partir de este
     return this.state.isLoading? (
@@ -31,7 +44,13 @@ export default class App extends React.Component {
         
       </View>
     ):(
-      <View style={{flex: 1, backgroundColor: 'black'}}></View>
+      <View style={{flex: 1, backgroundColor: 'black'}}>
+        <FlatList horizontal 
+        pagingEnabled 
+        data={this.state.images}
+        renderItem = {({item})=>this.renderItem(item)}
+        resizeMode= 'cover'/>
+      </View>
     )
   }
   
